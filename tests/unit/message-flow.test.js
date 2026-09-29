@@ -39,17 +39,16 @@ describe("local WhatsApp message flow", () => {
     expect(body.messages[0].role).toBe("system");
     expect(body.messages[1]).toEqual({ role: "user", content: "bunos dias" });
     expect(body).toMatchObject({ temperature: 0, max_tokens: 384, stream: false });
-    expect(body.messages[0].content).toContain("identifica en silencio quién habla");
-    expect(body.messages[0].content).toContain("Tarea: MEJORAR");
+    expect(body.messages[0].content).toContain("texto para editar");
+    expect(body.messages[0].content).toContain("Corrige ortografía");
   });
 
   it("keeps correction distinct from improvement and preserves the draft's language", async () => {
     await send({ type: "REWRITE_MESSAGE", mode: "correct", text: "i dont know" });
     const [, options] = fetchMock.mock.calls.find(([url]) => url.endsWith("/v1/chat/completions"));
     const prompt = JSON.parse(options.body).messages[0].content;
-    expect(prompt).toContain("Tarea: CORREGIR");
-    expect(prompt).toContain("Conserva el idioma del borrador");
-    expect(prompt).toContain("No reformules para embellecer");
+    expect(prompt).toContain("en su idioma");
+    expect(prompt).toContain("Cambia solo lo necesario");
   });
 
   it("allocates enough output tokens for longer drafts", async () => {
@@ -91,7 +90,48 @@ describe("local WhatsApp message flow", () => {
     expect(result).toMatchObject({ success: true, text: "Crea una extensión que mejore mis mensajes mientras escribo." });
     expect(completions).toBe(2);
     const calls = fetchMock.mock.calls.filter(([url]) => url.endsWith("/v1/chat/completions"));
-    expect(JSON.parse(calls[1][1].body).messages[0].content).toContain("no hagas lo solicitado");
+    expect(JSON.parse(calls[1][1].body).messages[0].content).toContain("No respondas ni agradezcas");
+  });
+
+  it("repairs a reply to the user's short statement instead of applying it", async () => {
+    let completions = 0;
+    fetchMock.mockImplementation(async (url) => {
+      if (url.endsWith("/health")) return Response.json({ status: "ok" });
+      if (url.endsWith("/v1/models")) return Response.json({ data: [{ id: "qwen2.5-3b-instruct.gguf" }] });
+      completions++;
+      return Response.json({ choices: [{ message: { content: completions === 1 ?
+        "Gracias por ejecutarlo." : "Listo, ya lo ejecuté." } }] });
+    });
+    const result = await send({ type: "REWRITE_MESSAGE", mode: "improve", text: "listo , ya lo ejecute   " });
+    expect(result).toMatchObject({ success: true, text: "Listo, ya lo ejecuté." });
+    expect(completions).toBe(2);
+  });
+
+  it("rejects a short reply or changed tense when the repair also fails", async () => {
+    fetchMock.mockImplementation(async (url) => url.endsWith("/v1/chat/completions") ?
+      Response.json({ choices: [{ message: { content: "Listo, ya lo ejecutaré." } }] }) :
+      url.endsWith("/health") ? Response.json({ status: "ok" }) :
+        Response.json({ data: [{ id: "qwen2.5-3b-instruct.gguf" }] }));
+    const result = await send({ type: "REWRITE_MESSAGE", mode: "improve", text: "listo , ya lo ejecute   " });
+    expect(result).toMatchObject({ success: false, error: expect.stringContaining("se apartó") });
+  });
+
+  it("rejects an unrelated example copied into the response", async () => {
+    fetchMock.mockImplementation(async (url) => url.endsWith("/v1/chat/completions") ?
+      Response.json({ choices: [{ message: { content: "¿Puedes revisar el informe hoy y decirme si está listo para enviar?" } }] }) :
+      url.endsWith("/health") ? Response.json({ status: "ok" }) :
+        Response.json({ data: [{ id: "qwen2.5-3b-instruct.gguf" }] }));
+    const result = await send({ type: "REWRITE_MESSAGE", mode: "improve", text: "no lo he ejecutado todavía" });
+    expect(result).toMatchObject({ success: false, error: expect.stringContaining("se apartó") });
+  });
+
+  it("does not turn a very short acknowledgement into a reply", async () => {
+    fetchMock.mockImplementation(async (url) => url.endsWith("/v1/chat/completions") ?
+      Response.json({ choices: [{ message: { content: "Gracias." } }] }) :
+      url.endsWith("/health") ? Response.json({ status: "ok" }) :
+        Response.json({ data: [{ id: "qwen2.5-3b-instruct.gguf" }] }));
+    const result = await send({ type: "REWRITE_MESSAGE", mode: "improve", text: "ok" });
+    expect(result).toMatchObject({ success: false, error: expect.stringContaining("se apartó") });
   });
 
   it("does not apply an explanatory response after the retry", async () => {
@@ -100,7 +140,7 @@ describe("local WhatsApp message flow", () => {
       url.endsWith("/health") ? Response.json({ status: "ok" }) :
         Response.json({ data: [{ id: "qwen2.5-3b-instruct.gguf" }] }));
     const result = await send({ type: "REWRITE_MESSAGE", mode: "improve", text: "cree una extencion" });
-    expect(result).toMatchObject({ success: false, error: expect.stringContaining("respondió") });
+    expect(result).toMatchObject({ success: false, error: expect.stringContaining("se apartó") });
   });
 
   it("keeps intentional surrounding quotes", async () => {

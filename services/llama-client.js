@@ -10,7 +10,7 @@ const ERRORS = {
   failed: "No se pudo mejorar el mensaje con la IA local.",
   incomplete: "La IA local devolvió un mensaje incompleto. El borrador se conservó; inténtalo de nuevo o usa un texto más corto.",
   alteredFacts: "La IA local cambió cifras o datos de contacto del mensaje. El borrador se conservó.",
-  notAnEdit: "La IA local respondió al mensaje en vez de editarlo. El borrador se conservó.",
+  notAnEdit: "La IA local se apartó del texto original. El borrador se conservó.",
 };
 
 async function request(path, options = {}, timeoutMs = 30_000) {
@@ -96,6 +96,52 @@ function cleanGeneratedText(content, original) {
   return originalIsQuoted ? cleaned : cleaned.replace(/^["“”'«](.*)["“”'»]$/s, "$1").trim();
 }
 
+function contentWords(text) {
+  const anchors = new Set(["no", "ya", "sin", "nunca"]);
+  const words = text.toLowerCase().normalize("NFD").replace(/\p{M}/gu, "").match(/[\p{L}\p{N}]+/gu) || [];
+  const meaningful = words.filter((word) => word.length >= 4 || anchors.has(word));
+  return meaningful.length > 0 ? meaningful : words;
+}
+
+function isNearbyWord(source, candidate) {
+  if (source === candidate) return true;
+  if (Math.abs(source.length - candidate.length) > 1) return false;
+  let edits = 0;
+  let i = 0;
+  let j = 0;
+  while (i < source.length && j < candidate.length) {
+    if (source[i] === candidate[j]) {
+      i++;
+      j++;
+      continue;
+    }
+    if (++edits > 1) return false;
+    if (source.length >= candidate.length) i++;
+    if (candidate.length >= source.length) j++;
+  }
+  return edits + (source.length - i) + (candidate.length - j) <= 1;
+}
+
+function preservesSourceWords(original, generated) {
+  const source = contentWords(original);
+  const candidate = contentWords(generated);
+  if (source.length === 0) return generated.trim() === original.trim();
+  if (source.length > 80) return true;
+  const remaining = [...candidate];
+  let matched = 0;
+  for (const word of source) {
+    const index = remaining.findIndex((other) => isNearbyWord(word, other));
+    if (index < 0) continue;
+    matched++;
+    remaining.splice(index, 1);
+  }
+  const anchors = ["no", "ya", "sin", "nunca"];
+  if (anchors.some((word) => source.filter((item) => item === word).length !== candidate.filter((item) => item === word).length)) {
+    return false;
+  }
+  return matched / source.length >= 0.75 && remaining.length <= Math.max(1, Math.ceil(source.length * 0.4));
+}
+
 function reviewGeneratedText(original, generated, mode) {
   if (JSON.stringify(protectedFacts(generated)) !== JSON.stringify(protectedFacts(original))) {
     return ERRORS.alteredFacts;
@@ -105,6 +151,7 @@ function reviewGeneratedText(original, generated, mode) {
     original.length * (mode === "correct" ? 1.7 : 2.2),
   );
   if (generated.length > maxLength) return ERRORS.notAnEdit;
+  if (!preservesSourceWords(original, generated)) return ERRORS.notAnEdit;
   return null;
 }
 
