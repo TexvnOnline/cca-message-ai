@@ -157,6 +157,14 @@
     toolbar.querySelector("[data-cca-status]").textContent = label;
   }
 
+  function rewriteErrorMessage(error) {
+    const message = error?.message || "No se pudo procesar el mensaje.";
+    if (/extension context invalidated/i.test(message)) {
+      return "La extensión se recargó. Copia tu borrador y actualiza WhatsApp Web (F5); luego vuelve a intentarlo.";
+    }
+    return message;
+  }
+
   async function rewrite(mode) {
     if (busy) return;
     const composer = findComposer();
@@ -195,7 +203,7 @@
           // A failed restore must not hide the original error.
         }
       }
-      setBusy(false, error.message || "No se pudo procesar el mensaje.", "error");
+      setBusy(false, rewriteErrorMessage(error), "error");
     } finally {
       window.clearInterval(progressTimer);
     }

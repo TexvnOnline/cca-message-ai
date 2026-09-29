@@ -83,6 +83,25 @@ test("a local AI error leaves the draft untouched", async ({ page }) => {
   await expect(page.locator("[data-cca-status]")).toContainText("IA local no disponible");
 });
 
+test("an invalidated extension context explains how to recover without changing the draft", async ({ page }) => {
+  await page.setContent(
+    '<main id="main"><footer><div id="editor" contenteditable="true" role="textbox"></div></footer></main>',
+  );
+  await page.evaluate(() => {
+    window.chrome = {
+      runtime: {
+        sendMessage: async () => { throw new Error("Extension context invalidated."); },
+      },
+    };
+  });
+  await page.addScriptTag({ path: "content/whatsapp-integration.js" });
+  await page.locator("#editor").fill("Borrador sin enviar");
+  await page.getByRole("button", { name: "Mejorar" }).click();
+  await expect(page.locator("#editor")).toHaveText("Borrador sin enviar");
+  await expect(page.locator("[data-cca-status]")).toContainText("actualiza WhatsApp Web (F5)");
+  await expect(page.locator("[data-cca-status]")).not.toContainText("Extension context invalidated");
+});
+
 test("keeps actions beside a composer whose footer is positioned at the bottom", async ({ page }) => {
   await page.setContent(`
     <style>
