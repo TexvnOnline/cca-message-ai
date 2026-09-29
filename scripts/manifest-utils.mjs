@@ -13,7 +13,7 @@ export const deepMerge = (base, patch) => {
 
 export const resolveBuildTarget = (target = "chrome") => ({
   manifestPatchPath: target === "firefox" ? "manifest.firefox.patch.json" : "manifest.chrome.patch.json",
-  outputZip: target === "firefox" ? "correctly-firefox.xpi" : "correctly-chrome.zip",
+  outputZip: target === "firefox" ? "cca-message-ai-firefox.xpi" : "cca-message-ai-chrome.zip",
 });
 
 export const loadManifestForTarget = (target = "chrome", versionOverride = null) => {

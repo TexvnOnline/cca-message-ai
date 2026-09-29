@@ -29,7 +29,7 @@ export async function startFixtureServer() {
 }
 
 export async function launchExtensionContext() {
-  const userDataDir = await fs.mkdtemp(path.join(os.tmpdir(), "correctly-pw-"));
+  const userDataDir = await fs.mkdtemp(path.join(os.tmpdir(), "cca-message-ai-pw-"));
   const context = await chromium.launchPersistentContext(userDataDir, {
     headless: process.env.PW_HEADLESS === "1",
     channel: "chromium",

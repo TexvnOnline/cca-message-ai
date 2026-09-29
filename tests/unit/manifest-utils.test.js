@@ -6,14 +6,14 @@ describe("manifest utils", () => {
   it("resolves chrome target output", () => {
     expect(resolveBuildTarget("chrome")).toEqual({
       manifestPatchPath: "manifest.chrome.patch.json",
-      outputZip: "correctly-chrome.zip",
+      outputZip: "cca-message-ai-chrome.zip",
     });
   });
 
   it("resolves firefox target output", () => {
     expect(resolveBuildTarget("firefox")).toEqual({
       manifestPatchPath: "manifest.firefox.patch.json",
-      outputZip: "correctly-firefox.xpi",
+      outputZip: "cca-message-ai-firefox.xpi",
     });
   });
 
@@ -27,7 +27,7 @@ describe("manifest utils", () => {
   it("loads merged firefox manifest", () => {
     const manifest = loadManifestForTarget("firefox");
     expect(manifest.background.scripts).toEqual(["background/service-worker.js"]);
-    expect(manifest.browser_specific_settings.gecko.id).toBe("correctly@mak.in");
+    expect(manifest.browser_specific_settings.gecko.id).toBe("cca-message-ai@ccasolucionesweb.com");
     expect(manifest.browser_specific_settings.gecko.data_collection_permissions.required).toEqual(["none"]);
     expect(manifest.browser_specific_settings.gecko.data_collection_permissions.optional).toEqual([
       "technicalAndInteraction",

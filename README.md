@@ -1,5 +1,7 @@
 # CCA Message AI — corrector de mensajes para WhatsApp Web con IA local
 
+Creado y mantenido por [**CCA Soluciones Web**](https://ccasolucionesweb.com/). [Página del proyecto](https://texvnonline.github.io/cca-message-ai/) · [Código en GitHub](https://github.com/TexvnOnline/cca-message-ai).
+
 Extensión **gratis y de código abierto para Google Chrome** que permite **corregir la ortografía** y **mejorar la redacción** de un borrador en WhatsApp Web. Usa un modelo GGUF mediante [llama.cpp](https://github.com/ggml-org/llama.cpp) en tu propio equipo. Puedes revisar y editar el resultado antes de enviarlo.
 
 No necesitas una cuenta de IA ni una clave API. La extensión no incluye el servidor ni el modelo: cada usuario los instala por separado. Este proyecto es independiente de WhatsApp y Meta.
@@ -17,7 +19,7 @@ Necesitas **Google Chrome**, [llama.cpp para Windows](https://github.com/ggml-or
 
 ### 1. Obtén la extensión
 
-**Sin compilar:** descarga `correctly-chrome.zip` desde este repositorio de GitHub y descomprímelo. En la carpeta extraída debe quedar `manifest.json`. Conserva la carpeta: Chrome la necesita para mantener instalada la extensión.
+**Sin compilar:** descarga [`cca-message-ai-chrome.zip`](https://github.com/TexvnOnline/cca-message-ai/raw/refs/heads/master/cca-message-ai-chrome.zip) y descomprímelo. En la carpeta extraída debe quedar `manifest.json`. Conserva la carpeta: Chrome la necesita para mantener instalada la extensión.
 
 **Para modificar el código:** descarga el proyecto con **Code → Download ZIP** en GitHub y descomprímelo. Si ya usas Git, puedes clonarlo desde el botón **Code**. Abre PowerShell en la carpeta del proyecto y ejecuta:
 
@@ -26,7 +28,7 @@ npm ci
 npm run build:release:chrome
 ```
 
-La compilación crea `dist/correctly`. Chrome debe cargar **la carpeta extraída del ZIP** o **`dist/correctly`**, según la opción elegida; no selecciones un archivo ZIP en «Cargar extensión sin empaquetar».
+La compilación crea `dist/cca-message-ai`. Chrome debe cargar **la carpeta extraída del ZIP** o **`dist/cca-message-ai`**, según la opción elegida; no selecciones un archivo ZIP en «Cargar extensión sin empaquetar».
 
 ### 2. Inicia la IA local
 
@@ -56,7 +58,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\scripts\stop-local-ai
 
 1. Abre `chrome://extensions/`.
 2. Activa **Modo de desarrollador**.
-3. Pulsa **Cargar extensión sin empaquetar** y elige la carpeta que contiene `manifest.json`: la que extrajiste del ZIP o `dist/correctly`.
+3. Pulsa **Cargar extensión sin empaquetar** y elige la carpeta que contiene `manifest.json`: la que extrajiste del ZIP o `dist/cca-message-ai`.
 4. Abre el icono de **CCA Message AI** y pulsa **Comprobar conexión**. Debe mostrar que la IA local está lista. **Probar modelo** comprueba la generación con un ejemplo.
 5. Abre [WhatsApp Web](https://web.whatsapp.com/), escribe un borrador y pulsa **Corregir** o **Mejorar**. Revisa el resultado antes de enviarlo.
 
@@ -70,7 +72,7 @@ Si cambias el código, ejecuta otra vez `npm run build:release:chrome`, pulsa **
 | El servidor responde, pero la extensión no genera texto | Espera a que el modelo termine de cargar, abre el popup y pulsa **Comprobar conexión** y **Probar modelo**. |
 | No aparecen los botones | Recarga la extensión y después actualiza la pestaña de WhatsApp Web. |
 | La IA tarda demasiado o Windows se queda sin memoria | Usa un GGUF cuantizado más pequeño y cierra otras aplicaciones; el consumo depende del modelo y del contexto. |
-| Chrome no encuentra la extensión | Selecciona la carpeta que contiene `manifest.json`: la extraída del ZIP o **`dist/correctly`**. |
+| Chrome no encuentra la extensión | Selecciona la carpeta que contiene `manifest.json`: la extraída del ZIP o **`dist/cca-message-ai`**. |
 
 Si el problema continúa, abre un *issue* en el repositorio e incluye los pasos para reproducirlo, la versión de Chrome y la salida de `llama-server`. Oculta números de teléfono y mensajes privados antes de adjuntar capturas o registros.
 
@@ -114,8 +116,10 @@ Para cambios grandes, abre primero un *issue* y comenta la idea. Las aportacione
 - `scripts/`: compilación y scripts opcionales de inicio y detención.
 - `tests/`: pruebas automatizadas.
 
-## Créditos y licencia
+## Créditos
 
-Proyecto publicado y mantenido por [**TexvnOnline**](https://github.com/TexvnOnline). Las contribuciones de la comunidad son bienvenidas.
+Proyecto creado y mantenido por [**CCA Soluciones Web**](https://ccasolucionesweb.com/). Las contribuciones de la comunidad son bienvenidas.
 
-El código se distribuye bajo la licencia [BSD 3-Clause](LICENSE). El archivo de licencia conserva el aviso de copyright original de **Aamir khan (2026)**; mantenlo en cualquier redistribución. llama.cpp y el modelo Qwen tienen sus propias licencias y se descargan por separado.
+## Licencia
+
+El código se distribuye bajo la licencia [BSD 3-Clause](LICENSE). Conserva todos los avisos de copyright de ese archivo al redistribuir el código. llama.cpp y el modelo Qwen tienen sus propias licencias y se descargan por separado.

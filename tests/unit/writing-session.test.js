@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import "../../content/writing-session.js";
 
-const WritingSession = globalThis.CorrectlyWritingSession;
+const WritingSession = globalThis.CCAMessageAIWritingSession;
 
 function makeElement() {
   return {};

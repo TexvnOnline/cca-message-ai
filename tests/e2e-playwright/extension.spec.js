@@ -99,18 +99,18 @@ test("E2E-CONTENT-001/002 popup config -> tooltip -> apply correction", async ()
     await page.goto(`http://${HOST}:${fixture.port}/tests/e2e/fixtures/editor.html`, { waitUntil: "load" });
     const editor = page.locator("#editor");
     await editor.fill("this is teh sample text");
-    await page.waitForSelector(".correctly-tooltip.correctly-visible", { timeout: 15000 });
-    const tooltipText = await page.locator(".correctly-tooltip").innerText();
+    await page.waitForSelector(".cca-tooltip.cca-visible", { timeout: 15000 });
+    const tooltipText = await page.locator(".cca-tooltip").innerText();
     assert(tooltipText.includes("the"), "missing replacement in tooltip");
 
     const applyAllVisible = await page
-      .locator(".correctly-accept")
+      .locator(".cca-accept")
       .isVisible()
       .catch(() => false);
     if (applyAllVisible) {
-      await page.click(".correctly-accept");
+      await page.click(".cca-accept");
     } else {
-      await page.click(".correctly-accept-one");
+      await page.click(".cca-accept-one");
     }
     await page.waitForFunction(
       () => (document.querySelector("#editor")?.value || "").includes("the sample text"),

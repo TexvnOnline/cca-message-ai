@@ -88,8 +88,8 @@ async function handleGrammarCheck(text, log, { tabId } = {}) {
     hasKey: Boolean(apiKey),
   });
 
-  if (!enabled) throw new Error("Correctly is disabled");
-  if (!apiKey) throw new Error("No API key configured. Click the Correctly icon to set one up.");
+  if (!enabled) throw new Error("CCA Message AI is disabled");
+  if (!apiKey) throw new Error("No API key configured. Click the CCA Message AI icon to set one up.");
 
   const provider = getOrCreateProvider(providerId, apiKey, model, baseUrl, log);
   log.info(`Using provider: ${provider.providerName}, model: ${provider.model}`);

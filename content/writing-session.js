@@ -156,5 +156,5 @@
     }
   }
 
-  globalThis.CorrectlyWritingSession = WritingSession;
+  globalThis.CCAMessageAIWritingSession = WritingSession;
 })();

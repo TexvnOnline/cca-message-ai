@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { cpSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { transform } from "esbuild";
 import { minify } from "html-minifier-terser";
 import { loadManifestForTarget, resolveBuildTarget } from "./manifest-utils.mjs";
@@ -10,15 +10,25 @@ const versionOverride = versionArg ? versionArg.slice("--version=".length) : nul
 const targetArg = process.argv.find((arg) => arg.startsWith("--target="));
 const target = targetArg ? targetArg.slice("--target=".length) : "chrome";
 const { outputZip } = resolveBuildTarget(target);
-const root = "dist/correctly";
+const root = "dist/cca-message-ai";
 
 const manifest = loadManifestForTarget(target, versionOverride);
 rmSync("dist", { recursive: true, force: true });
 mkdirSync(root, { recursive: true });
 writeFileSync(join(root, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
 
-for (const directory of ["background", "content", "popup", "lib", "providers", "services"]) {
-  cpSync(directory, join(root, directory), { recursive: true });
+for (const file of [
+  "background/service-worker.js",
+  "content/whatsapp-integration.js",
+  "content/whatsapp-integration.css",
+  "popup/popup.html",
+  "popup/popup.js",
+  "popup/popup.css",
+  "lib/message-prompts.js",
+  "services/llama-client.js",
+]) {
+  mkdirSync(dirname(join(root, file)), { recursive: true });
+  cpSync(file, join(root, file));
 }
 mkdirSync(join(root, "icons"), { recursive: true });
 for (const size of [16, 48, 128]) cpSync(`icons/icon${size}.png`, join(root, `icons/icon${size}.png`));

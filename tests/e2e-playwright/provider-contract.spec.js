@@ -21,11 +21,11 @@ async function openEditorPage(context, fixture) {
 
 async function fillEditorAndWaitTooltip(page, inputText) {
   await page.locator("#editor").fill(inputText);
-  await page.waitForSelector(".correctly-tooltip.correctly-visible", { timeout: 15000 });
+  await page.waitForSelector(".cca-tooltip.cca-visible", { timeout: 15000 });
 }
 
 async function acceptCorrection(page, expectedText) {
-  await page.click(".correctly-accept");
+  await page.click(".cca-accept");
   await page.waitForFunction((expected) => document.querySelector("#editor")?.value === expected, expectedText, {
     timeout: 10000,
   });
@@ -92,7 +92,7 @@ ${JSON.stringify({
 
     const page = await openEditorPage(context, fixture);
     await fillEditorAndWaitTooltip(page, "this is teh sample sentence for grammar check");
-    const tooltipText = await page.locator(".correctly-tooltip").innerText();
+    const tooltipText = await page.locator(".cca-tooltip").innerText();
     assert(tooltipText.toLowerCase().includes("the"), "tooltip missing corrected token");
     assert(!tooltipText.includes("terminal punctuation"), "hidden punctuation change should not render");
 
@@ -248,7 +248,7 @@ test("E2E-SCORING-004 level 3 plain-text fallback applies full correction", asyn
     const page = await openEditorPage(context, fixture);
     await fillEditorAndWaitTooltip(page, "He go to school yesterday.");
     const oneClickVisible = await page
-      .locator(".correctly-accept-one")
+      .locator(".cca-accept-one")
       .isVisible()
       .catch(() => false);
     assert(!oneClickVisible, "Level 3 full-text fallback should not show individual change buttons");

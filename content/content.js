@@ -1,5 +1,5 @@
 (async () => {
-  const LOG_PREFIX = "[Correctly][content]";
+  const LOG_PREFIX = "[CCA Message AI][content]";
   const LOG_STYLES = {
     debug: "color: #888",
     info: "color: #2d7d46; font-weight: bold",
@@ -101,7 +101,7 @@
   /**
    * Determines if an element should be grammar-checked.
    * Respects HTML standards, ARIA attributes,
-   * and our own data-correctly attribute.
+   * and our own data-cca attribute.
    *
    * Returns { check: boolean, reason: string } so decisions can be logged.
    */
@@ -109,9 +109,9 @@
     if (!el) return { check: false, reason: "null element" };
 
     // ── 1. Our own override (highest priority) ──
-    const correctly = getInheritedAttr(el, "data-correctly");
-    if (correctly === "false") return { check: false, reason: 'data-correctly="false"' };
-    if (correctly === "true") return { check: true, reason: 'data-correctly="true" (forced)' };
+    const cca = getInheritedAttr(el, "data-cca");
+    if (cca === "false") return { check: false, reason: 'data-cca="false"' };
+    if (cca === "true") return { check: true, reason: 'data-cca="true" (forced)' };
 
     // ── 2. Basic element eligibility ──
     const tag = el.tagName;
@@ -245,48 +245,48 @@
     if (tooltipEl) return tooltipEl;
 
     tooltipEl = document.createElement("div");
-    tooltipEl.className = "correctly-tooltip";
-    tooltipEl.id = "correctly-suggestions";
+    tooltipEl.className = "cca-tooltip";
+    tooltipEl.id = "cca-suggestions";
     tooltipEl.setAttribute("role", "dialog");
-    tooltipEl.setAttribute("aria-labelledby", "correctly-suggestions-title");
+    tooltipEl.setAttribute("aria-labelledby", "cca-suggestions-title");
     tooltipEl.setAttribute("aria-live", "polite");
     tooltipEl.setAttribute("tabindex", "-1");
 
     const inner = document.createElement("div");
-    inner.className = "correctly-tooltip-inner";
+    inner.className = "cca-tooltip-inner";
 
     const header = document.createElement("div");
-    header.className = "correctly-tooltip-header";
+    header.className = "cca-tooltip-header";
 
     const title = document.createElement("span");
-    title.className = "correctly-logo";
-    title.id = "correctly-suggestions-title";
-    title.textContent = "Correctly";
+    title.className = "cca-logo";
+    title.id = "cca-suggestions-title";
+    title.textContent = "CCA Message AI";
 
     const count = document.createElement("span");
-    count.className = "correctly-suggestion-count";
-    count.id = "correctly-suggestion-count";
+    count.className = "cca-suggestion-count";
+    count.id = "cca-suggestion-count";
 
     const close = document.createElement("button");
-    close.className = "correctly-close";
+    close.className = "cca-close";
     close.type = "button";
     close.setAttribute("aria-label", "Close suggestions");
     close.textContent = "\u00d7";
 
     const body = document.createElement("div");
-    body.className = "correctly-body";
-    body.id = "correctly-suggestions-body";
+    body.className = "cca-body";
+    body.id = "cca-suggestions-body";
 
     const actions = document.createElement("div");
-    actions.className = "correctly-actions";
+    actions.className = "cca-actions";
 
     const accept = document.createElement("button");
-    accept.className = "correctly-accept";
+    accept.className = "cca-accept";
     accept.type = "button";
     accept.textContent = "Apply all";
 
     const dismiss = document.createElement("button");
-    dismiss.className = "correctly-dismiss";
+    dismiss.className = "cca-dismiss";
     dismiss.type = "button";
     dismiss.textContent = "Ignore";
 
@@ -313,7 +313,7 @@
     document.addEventListener(
       "keydown",
       (e) => {
-        if (e.key === "Escape" && tooltipEl?.classList.contains("correctly-visible")) {
+        if (e.key === "Escape" && tooltipEl?.classList.contains("cca-visible")) {
           hideTooltip();
         }
       },
@@ -321,7 +321,7 @@
     );
 
     body.addEventListener("click", (e) => {
-      const btn = e.target.closest(".correctly-accept-one");
+      const btn = e.target.closest(".cca-accept-one");
       if (!btn) return;
       e.stopPropagation();
       acceptSingleCorrection(parseInt(btn.dataset.index, 10));
@@ -335,9 +335,9 @@
     currentCorrection = correction;
 
     const tooltip = createTooltip();
-    const body = tooltip.querySelector(".correctly-body");
-    const acceptButton = tooltip.querySelector(".correctly-accept");
-    const countLabel = tooltip.querySelector(".correctly-suggestion-count");
+    const body = tooltip.querySelector(".cca-body");
+    const acceptButton = tooltip.querySelector(".cca-accept");
+    const countLabel = tooltip.querySelector(".cca-suggestion-count");
 
     const { changes, corrected, confidence, cascadeLevel } = correction;
     const currentText = getTextFromElement(element);
@@ -350,13 +350,13 @@
 
       if (hasFullTextCorrection) {
         const change = document.createElement("div");
-        change.className = "correctly-change";
+        change.className = "cca-change";
         change.appendChild(createSuggestionText(currentText, corrected));
         appendConfidence(change, confidence, cascadeLevel);
         body.appendChild(change);
       } else {
         const noErrors = document.createElement("p");
-        noErrors.className = "correctly-no-errors";
+        noErrors.className = "cca-no-errors";
         noErrors.textContent = "No grammar issues found.";
         body.appendChild(noErrors);
       }
@@ -369,9 +369,9 @@
 
     tooltipOwnerElement?.removeAttribute("aria-describedby");
     tooltipOwnerElement = element;
-    element.setAttribute("aria-describedby", "correctly-suggestions-body");
+    element.setAttribute("aria-describedby", "cca-suggestions-body");
     positionTooltip(tooltip, element);
-    tooltip.classList.add("correctly-visible");
+    tooltip.classList.add("cca-visible");
 
     log.info(`Tooltip shown with ${changes.length} correction(s)`);
   }
@@ -390,23 +390,23 @@
 
   function createChangeItem(change, index) {
     const item = document.createElement("div");
-    item.className = "correctly-change";
+    item.className = "cca-change";
     item.dataset.index = String(index);
 
     const row = document.createElement("div");
-    row.className = "correctly-change-row";
+    row.className = "cca-change-row";
 
     const content = document.createElement("div");
-    content.className = "correctly-change-content";
+    content.className = "cca-change-content";
     content.appendChild(createSuggestionText(change.original, change.replacement));
 
     const explanation = document.createElement("p");
-    explanation.className = "correctly-explanation";
+    explanation.className = "cca-explanation";
     explanation.textContent = change.explanation;
     content.appendChild(explanation);
 
     const acceptOne = document.createElement("button");
-    acceptOne.className = "correctly-accept-one";
+    acceptOne.className = "cca-accept-one";
     acceptOne.type = "button";
     acceptOne.dataset.index = String(index);
     acceptOne.setAttribute("aria-label", `Accept correction: replace ${change.original} with ${change.replacement}`);
@@ -419,18 +419,18 @@
 
   function createSuggestionText(original, replacement) {
     const suggestion = document.createElement("div");
-    suggestion.className = "correctly-suggestion-text";
+    suggestion.className = "cca-suggestion-text";
 
     const replacementEl = document.createElement("span");
-    replacementEl.className = "correctly-replacement";
+    replacementEl.className = "cca-replacement";
     replacementEl.textContent = replacement;
 
     const originalLine = document.createElement("div");
-    originalLine.className = "correctly-original-line";
+    originalLine.className = "cca-original-line";
     originalLine.append("Replace ");
 
     const originalEl = document.createElement("span");
-    originalEl.className = "correctly-original";
+    originalEl.className = "cca-original";
     originalEl.textContent = original;
     originalLine.appendChild(originalEl);
 
@@ -441,7 +441,7 @@
   function appendConfidence(parent, confidence, cascadeLevel = null) {
     if (!confidence) return;
     const confidenceEl = document.createElement("p");
-    confidenceEl.className = "correctly-confidence";
+    confidenceEl.className = "cca-confidence";
     if (cascadeLevel >= 3) {
       confidenceEl.textContent = "Corrected whole text";
       parent.appendChild(confidenceEl);
@@ -457,7 +457,7 @@
   function positionTooltip(tooltip, element) {
     tooltip.style.visibility = "hidden";
     tooltip.style.display = "block";
-    tooltip.classList.add("correctly-visible");
+    tooltip.classList.add("cca-visible");
 
     const elRect = element.getBoundingClientRect();
     const tipRect = tooltip.getBoundingClientRect();
@@ -532,8 +532,8 @@
   }
 
   function hideTooltip() {
-    if (tooltipEl?.classList.contains("correctly-visible")) {
-      tooltipEl.classList.remove("correctly-visible");
+    if (tooltipEl?.classList.contains("cca-visible")) {
+      tooltipEl.classList.remove("cca-visible");
       log.debug("Tooltip hidden");
     }
     tooltipOwnerElement?.removeAttribute("aria-describedby");
@@ -594,7 +594,7 @@
 
     currentCorrection.changes.splice(index, 1);
 
-    const changeEl = tooltipEl.querySelector(`.correctly-change[data-index="${index}"]`);
+    const changeEl = tooltipEl.querySelector(`.cca-change[data-index="${index}"]`);
     if (changeEl) changeEl.remove();
 
     if (currentCorrection.changes.length === 0) {
@@ -652,19 +652,19 @@
   chrome.runtime.onMessage.addListener((msg) => {
     if (msg.type === "CHECK_PROGRESS") {
       if (!indicatorEl) return;
-      const dot = indicatorEl.querySelector(".correctly-indicator-dot");
+      const dot = indicatorEl.querySelector(".cca-indicator-dot");
       if (!dot) return;
-      dot.className = `correctly-indicator-dot correctly-indicator-dot--${msg.status}`;
+      dot.className = `cca-indicator-dot cca-indicator-dot--${msg.status}`;
     }
   });
 
   function showIndicator(element, status = "checking") {
     removeIndicator();
     const indicator = document.createElement("div");
-    indicator.className = "correctly-indicator";
+    indicator.className = "cca-indicator";
     indicator.setAttribute("aria-hidden", "true");
     const dot = document.createElement("span");
-    dot.className = `correctly-indicator-dot correctly-indicator-dot--${status}`;
+    dot.className = `cca-indicator-dot cca-indicator-dot--${status}`;
     indicator.appendChild(dot);
 
     const rect = element.getBoundingClientRect();
@@ -703,7 +703,7 @@
     showNudge({
       anchor: element,
       message:
-        "We noticed you keep ignoring suggestions here. If they are getting in the way, you can disable Correctly on this site.",
+        "We noticed you keep ignoring suggestions here. If they are getting in the way, you can disable CCA Message AI on this site.",
       actions: [
         {
           label: "Disable on this site",
@@ -737,7 +737,7 @@
 
   function showDisabledNudge() {
     showNudge({
-      message: "Correctly is disabled on this site. You can enable it again from the extension settings.",
+      message: "CCA Message AI is disabled on this site. You can enable it again from the extension settings.",
       compact: true,
       durationMs: 4200,
     });
@@ -745,8 +745,8 @@
 
   function showCheckErrorNudge(error, element) {
     const message = error
-      ? `Correctly could not check this text. ${error}`
-      : "Correctly could not check this text. Try again in a moment.";
+      ? `CCA Message AI could not check this text. ${error}`
+      : "CCA Message AI could not check this text. Try again in a moment.";
     const now = Date.now();
 
     if (lastErrorNudge.message === message && now - lastErrorNudge.timestamp < ERROR_NUDGE_COOLDOWN_MS) {
@@ -765,25 +765,25 @@
   function showNudge({ message, actions = [], anchor = null, compact = false, durationMs = null }) {
     removeNudges();
     const nudge = document.createElement("div");
-    nudge.className = compact ? "correctly-nudge correctly-nudge--compact" : "correctly-nudge";
+    nudge.className = compact ? "cca-nudge cca-nudge--compact" : "cca-nudge";
     nudge.setAttribute("role", "status");
     nudge.setAttribute("aria-live", "polite");
 
     if (actions.length > 0) {
       const messageEl = document.createElement("div");
-      messageEl.className = "correctly-nudge__message";
+      messageEl.className = "cca-nudge__message";
       messageEl.textContent = message;
 
       const actionsEl = document.createElement("div");
-      actionsEl.className = "correctly-nudge__actions";
+      actionsEl.className = "cca-nudge__actions";
 
       actionsEl.append(
         ...actions.map((action) => {
           const button = document.createElement("button");
           button.className =
             action.kind === "primary"
-              ? "correctly-nudge__action correctly-nudge__action--primary"
-              : "correctly-nudge__action";
+              ? "cca-nudge__action cca-nudge__action--primary"
+              : "cca-nudge__action";
           button.type = "button";
           button.textContent = action.label;
           button.addEventListener("click", action.onClick);
@@ -804,7 +804,7 @@
 
     if (durationMs !== null) {
       setTimeout(() => {
-        nudge.classList.add("correctly-nudge--leaving");
+        nudge.classList.add("cca-nudge--leaving");
         setTimeout(() => nudge.remove(), 180);
       }, durationMs);
     }
@@ -832,7 +832,7 @@
   }
 
   function removeNudges() {
-    document.querySelectorAll(".correctly-nudge").forEach((el) => {
+    document.querySelectorAll(".cca-nudge").forEach((el) => {
       el.remove();
     });
   }
@@ -845,7 +845,7 @@
     }
   }
 
-  const WritingSession = globalThis.CorrectlyWritingSession;
+  const WritingSession = globalThis.CCAMessageAIWritingSession;
   if (!WritingSession) {
     log.error("WritingSession missing. Expected content/writing-session.js to load before content/content.js");
     return;
@@ -889,7 +889,7 @@
     siteActive = true;
     document.addEventListener("input", handleInput, true);
     document.addEventListener("focusout", handleFocusOut, true);
-    log.info("Event listeners attached — Correctly is active");
+    log.info("Event listeners attached — CCA Message AI is active");
   }
 
   function deactivate() {
@@ -901,7 +901,7 @@
     writingSession.deactivate();
     ignoreState = new WeakMap();
     activeElement = null;
-    log.info("Event listeners removed — Correctly is paused on this site");
+    log.info("Event listeners removed — CCA Message AI is paused on this site");
   }
 
   async function init() {
@@ -935,7 +935,7 @@
       log.info("Extension status:", status);
 
       if (!status.configured) {
-        log.warn("No API key configured — Correctly is inactive. Click the extension icon to set up.");
+        log.warn("No API key configured — CCA Message AI is inactive. Click the extension icon to set up.");
         return;
       }
       if (!status.enabled) {
@@ -961,7 +961,7 @@
 
     document.addEventListener("click", (e) => {
       if (
-        tooltipEl?.classList.contains("correctly-visible") &&
+        tooltipEl?.classList.contains("cca-visible") &&
         !tooltipEl.contains(e.target) &&
         e.target !== activeElement
       ) {
@@ -975,7 +975,7 @@
       if (repositionRAF) return;
       repositionRAF = requestAnimationFrame(() => {
         repositionRAF = null;
-        if (tooltipEl?.classList.contains("correctly-visible") && activeElement) {
+        if (tooltipEl?.classList.contains("cca-visible") && activeElement) {
           log.debug("Repositioning tooltip after scroll/resize");
           positionTooltip(tooltipEl, activeElement);
         }

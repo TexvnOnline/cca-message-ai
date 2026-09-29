@@ -1,5 +1,10 @@
 {
+  "name": "cca-message-ai",
   "private": true,
+  "description": "Extensión de Chrome para mejorar mensajes de WhatsApp Web con IA local.",
+  "author": "CCA Soluciones Web <https://ccasolucionesweb.com/>",
+  "homepage": "https://texvnonline.github.io/cca-message-ai/",
+  "repository": "https://github.com/TexvnOnline/cca-message-ai",
   "type": "module",
   "scripts": {
     "test": "vitest run",
@@ -9,10 +14,9 @@
     "test:e2e:provider": "playwright test tests/e2e-playwright/provider-contract.spec.js",
     "test:e2e:popup": "playwright test tests/e2e-playwright/popup-model-loading.spec.js",
     "test:e2e:all": "playwright test tests/e2e-playwright/whatsapp-integration.spec.js tests/e2e-playwright/whatsapp-extension.spec.js",
-    "check:landing-css": "node scripts/check-inline-landing-css.mjs",
     "lint": "biome lint .",
     "lint:fix": "biome lint . --write",
-    "build:clean": "rm -rf dist web-ext-artifacts correctly-chrome.zip correctly-firefox.xpi",
+    "build:clean": "node -e \"for (const p of ['dist','web-ext-artifacts','cca-message-ai-chrome.zip','cca-message-ai-firefox.xpi']) require('fs').rmSync(p,{recursive:true,force:true})\"",
     "build:release": "npm run build:release:chrome && npm run build:release:firefox",
     "build:release:chrome": "node scripts/build-release.mjs --target=chrome",
     "build:release:firefox": "node scripts/build-release.mjs --target=firefox"
