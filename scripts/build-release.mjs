@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { cpSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { transform } from "esbuild";
 import { minify } from "html-minifier-terser";
 import { loadManifestForTarget, resolveBuildTarget } from "./manifest-utils.mjs";
@@ -9,12 +9,18 @@ const versionArg = process.argv.find((arg) => arg.startsWith("--version="));
 const versionOverride = versionArg ? versionArg.slice("--version=".length) : null;
 const targetArg = process.argv.find((arg) => arg.startsWith("--target="));
 const target = targetArg ? targetArg.slice("--target=".length) : "chrome";
-const { outputZip } = resolveBuildTarget(target);
-const root = "dist/cca-message-ai";
+const outputBaseArg = process.argv.find((arg) => arg.startsWith("--output-base="));
+const outputZipArg = process.argv.find((arg) => arg.startsWith("--output-zip="));
+const outputBase = resolve(outputBaseArg ? outputBaseArg.slice("--output-base=".length) : "dist");
+const root = join(outputBase, "cca-message-ai");
+const { outputZip: defaultZip } = resolveBuildTarget(target);
+const outputZip = resolve(outputZipArg ? outputZipArg.slice("--output-zip=".length) : defaultZip);
 
 const manifest = loadManifestForTarget(target, versionOverride);
-rmSync("dist", { recursive: true, force: true });
+// Other folders under dist may be installed in Chrome. Only replace this build's folder.
+rmSync(root, { recursive: true, force: true });
 mkdirSync(root, { recursive: true });
+mkdirSync(dirname(outputZip), { recursive: true });
 writeFileSync(join(root, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
 
 for (const file of [
@@ -66,14 +72,14 @@ for (const path of files(root)) if (path.endsWith(".js")) execFileSync("node", [
 
 rmSync(outputZip, { force: true });
 if (process.platform === "win32") {
-  const tempZip = "cca-message-ai-temp.zip";
+  const tempZip = join(dirname(outputZip), "cca-message-ai-temp.zip");
   rmSync(tempZip, { force: true });
   execFileSync("powershell.exe", [
     "-NoProfile",
     "-Command",
-    `Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::CreateFromDirectory((Resolve-Path '${root}').Path, (Join-Path (Get-Location).Path '${tempZip}'))`,
+    `Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::CreateFromDirectory((Resolve-Path '${root}').Path, '${tempZip}')`,
   ]);
   renameSync(tempZip, outputZip);
 } else {
-  execFileSync("zip", ["-X", "-9", "-D", "-r", `../../${outputZip}`, "."], { cwd: root });
+  execFileSync("zip", ["-X", "-9", "-D", "-r", outputZip, "."], { cwd: root });
 }
