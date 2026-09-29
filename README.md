@@ -19,7 +19,7 @@ Necesitas **Google Chrome**, [llama.cpp para Windows](https://github.com/ggml-or
 
 ### 1. Obtén la extensión
 
-**Sin compilar:** descarga [`cca-message-ai-chrome.zip`](https://github.com/TexvnOnline/cca-message-ai/raw/refs/heads/master/cca-message-ai-chrome.zip) y descomprímelo. En la carpeta extraída debe quedar `manifest.json`. Conserva la carpeta: Chrome la necesita para mantener instalada la extensión.
+**Sin compilar:** descarga [`cca-message-ai-chrome.zip`](https://github.com/TexvnOnline/cca-message-ai/releases/latest/download/cca-message-ai-chrome.zip) y descomprímelo. En la carpeta extraída debe quedar `manifest.json`. Conserva la carpeta: Chrome la necesita para mantener instalada la extensión.
 
 **Para modificar el código:** descarga el proyecto con **Code → Download ZIP** en GitHub y descomprímelo. Si ya usas Git, puedes clonarlo desde el botón **Code**. Abre PowerShell en la carpeta del proyecto y ejecuta:
 
