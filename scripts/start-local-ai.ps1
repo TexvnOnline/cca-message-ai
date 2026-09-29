@@ -27,7 +27,7 @@ $arguments = @(
   '--alias', 'qwen2.5:3b'
 )
 $process = Start-Process -FilePath $server -WorkingDirectory (Split-Path $server) `
-  -ArgumentList $arguments -WindowStyle Hidden `
+  -ArgumentList $arguments -UseNewEnvironment -WindowStyle Hidden `
   -RedirectStandardOutput $stdout -RedirectStandardError $stderr -PassThru
 
 for ($attempt = 0; $attempt -lt 60; $attempt++) {

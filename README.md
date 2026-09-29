@@ -40,7 +40,7 @@ Descomprime llama.cpp y descarga el archivo `.gguf` del modelo. En PowerShell, c
 
 Deja esa ventana abierta mientras uses la extensión. Comprueba que [http://127.0.0.1:8080/health](http://127.0.0.1:8080/health) responda con `{"status":"ok"}`. La primera carga puede tardar.
 
-**Opción con los scripts del proyecto:** si colocas `llama-server.exe` y sus DLL en `local-ai/bin/` y renombras el GGUF como `local-ai/qwen2.5-3b.gguf`, puedes iniciarlo con:
+**Opción con los scripts del proyecto:** si colocas `llama-server.exe` y sus DLL en `local-ai/bin/` y renombras el GGUF como `local-ai/qwen2.5-3b.gguf`, haz doble clic en **`Iniciar IA local.bat`** en la carpeta principal. La ventana confirmará que la IA está lista y puedes cerrarla sin detener el servidor. También puedes iniciarlo con:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\scripts\start-local-ai.ps1"
