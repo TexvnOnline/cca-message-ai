@@ -1,0 +1,30 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:e2e": "playwright test tests/e2e-playwright/whatsapp-integration.spec.js",
+    "test:e2e:provider": "playwright test tests/e2e-playwright/provider-contract.spec.js",
+    "test:e2e:popup": "playwright test tests/e2e-playwright/popup-model-loading.spec.js",
+    "test:e2e:all": "playwright test tests/e2e-playwright/whatsapp-integration.spec.js tests/e2e-playwright/whatsapp-extension.spec.js",
+    "check:landing-css": "node scripts/check-inline-landing-css.mjs",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint . --write",
+    "build:clean": "rm -rf dist web-ext-artifacts correctly-chrome.zip correctly-firefox.xpi",
+    "build:release": "npm run build:release:chrome && npm run build:release:firefox",
+    "build:release:chrome": "node scripts/build-release.mjs --target=chrome",
+    "build:release:firefox": "node scripts/build-release.mjs --target=firefox"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.12",
+    "@playwright/test": "^1.60.0",
+    "@vitest/ui": "4.1.7",
+    "esbuild": "0.27.0",
+    "happy-dom": "20.9.0",
+    "html-minifier-terser": "7.2.0",
+    "playwright": "^1.60.0",
+    "vitest": "4.1.7"
+  }
+}

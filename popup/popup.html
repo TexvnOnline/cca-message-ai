@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>CCA Message AI</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main>
+      <h1>CCA Message AI</h1>
+      <p class="subtitle">Asistente local para WhatsApp Web</p>
+      <div class="status-row"><span>Estado de IA local</span><strong id="local-ai-status">Comprobando...</strong></div>
+      <p id="status-detail" role="status" aria-live="polite"></p>
+      <label for="server">Servidor</label>
+      <input id="server" type="text" value="http://127.0.0.1:8080" readonly>
+      <label for="model-name">Modelo detectado</label>
+      <input id="model-name" type="text" value="Comprobando..." readonly>
+      <p class="model-hint">Se usa automáticamente el modelo cargado en llama-server.</p>
+      <button id="check-connection" type="button">Comprobar conexión</button>
+      <button id="test-model" class="btn-secondary" type="button" disabled>Probar modelo</button>
+      <p id="test-result" role="status" aria-live="polite"></p>
+    </main>
+    <script src="popup.js" type="module"></script>
+  </body>
+</html>

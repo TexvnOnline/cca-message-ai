@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "CCA Message AI",
+  "version": "0.4.16",
+  "description": "Asistente local de redacción para WhatsApp Web con llama.cpp.",
+  "host_permissions": ["http://127.0.0.1:8080/*"],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'"
+  },
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://web.whatsapp.com/*"],
+      "js": ["content/whatsapp-integration.js"],
+      "css": ["content/whatsapp-integration.css"]
+    }
+  ]
+}

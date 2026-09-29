@@ -1,0 +1,7 @@
+local-ai/
+dist/
+node_modules/
+.npm-cache/
+.serena/
+test-results/
+playwright-report/
