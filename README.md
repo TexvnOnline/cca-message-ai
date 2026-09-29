@@ -1,6 +1,6 @@
 # CCA Message AI — corrector de mensajes para WhatsApp Web con IA local
 
-Creado y mantenido por [**CCA Soluciones Web**](https://ccasolucionesweb.com/). [Código en GitHub](https://github.com/TexvnOnline/cca-message-ai).
+Creado y mantenido por [**CCA Soluciones Web**](https://ccasolucionesweb.com/). [Visita la página del proyecto](https://texvnonline.github.io/cca-message-ai/) o consulta el [código en GitHub](https://github.com/TexvnOnline/cca-message-ai).
 
 Extensión **gratis y de código abierto para Google Chrome** que permite **corregir la ortografía** y **mejorar la redacción** de un borrador en WhatsApp Web. Usa un modelo GGUF mediante [llama.cpp](https://github.com/ggml-org/llama.cpp) en tu propio equipo. Puedes revisar y editar el resultado antes de enviarlo.
 

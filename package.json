@@ -3,7 +3,7 @@
   "private": true,
   "description": "Extensión de Chrome para mejorar mensajes de WhatsApp Web con IA local.",
   "author": "CCA Soluciones Web <https://ccasolucionesweb.com/>",
-  "homepage": "https://ccasolucionesweb.com/",
+  "homepage": "https://texvnonline.github.io/cca-message-ai/",
   "repository": "https://github.com/TexvnOnline/cca-message-ai",
   "type": "module",
   "scripts": {
